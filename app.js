@@ -980,55 +980,6 @@ function restoreBackupFile(file) {
   };
   reader.readAsText(file);
 }
-function seedData() {
-  var data = structuredClone(demoData);
-  data.entregas = [{
-    id: "ent_1",
-    cafeteriaId: "caf_amin",
-    fecha: "2026-06-08",
-    productos: [{
-      productoId: "prod_croissant",
-      cantidad: 8
-    }, {
-      productoId: "prod_chocolatin",
-      cantidad: 4
-    }]
-  }, {
-    id: "ent_2",
-    cafeteriaId: "caf_amin",
-    fecha: "2026-06-09",
-    productos: [{
-      productoId: "prod_croissant",
-      cantidad: 8
-    }, {
-      productoId: "prod_chocolatin",
-      cantidad: 4
-    }, {
-      productoId: "prod_scone",
-      cantidad: 2
-    }, {
-      productoId: "prod_galleta_avena",
-      cantidad: 2
-    }]
-  }, {
-    id: "ent_3",
-    cafeteriaId: "caf_amin",
-    fecha: "2026-06-10",
-    productos: [{
-      productoId: "prod_croissant",
-      cantidad: 10
-    }, {
-      productoId: "prod_chocolatin",
-      cantidad: 4
-    }, {
-      productoId: "prod_scone",
-      cantidad: 3
-    }]
-  }];
-  writeData(data);
-  boot();
-  showToast("Datos demo cargados");
-}
 function showView(viewName) {
   var titles = {
     inicio: "Inicio",
@@ -1125,7 +1076,6 @@ document.querySelectorAll("[data-close-modal]").forEach(function (button) {
     closeModal(button.closest(".modal-sheet"));
   });
 });
-document.querySelector("#seedButton").addEventListener("click", seedData);
 document.querySelector("#addCafeButton").addEventListener("click", addCafe);
 document.querySelector("#addProductButton").addEventListener("click", addProduct);
 document.querySelector("#closeNumberWheel").addEventListener("click", closeNumberWheel);
