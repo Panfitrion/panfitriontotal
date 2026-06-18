@@ -1,0 +1,11 @@
+{
+  "name": "PANFITRION",
+  "short_name": "PANFITRION",
+  "description": "Gestion de entregas y cuentas de PANFITRION.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f5f2",
+  "theme_color": "#f6f5f2",
+  "orientation": "portrait"
+}
