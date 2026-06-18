@@ -317,6 +317,9 @@ function setNumberButtonValue(button, value) {
   button.dataset.value = String(normalized);
   button.textContent = normalized;
   button.classList.toggle("has-value", normalized > 0);
+  button.classList.remove("bump");
+  void button.offsetWidth;
+  button.classList.add("bump");
   updateDeliverySummary();
 }
 function setWheelValue(value) {
@@ -1033,6 +1036,13 @@ function showView(viewName) {
     cuentas: "Cuentas",
     catalogos: "Datos"
   };
+  var app = document.querySelector(".phone-app");
+  if (app) {
+    app.dataset.view = viewName;
+    app.classList.remove("view-shift");
+    void app.offsetWidth;
+    app.classList.add("view-shift");
+  }
   document.querySelector("#screenTitle").textContent = titles[viewName] || "Inicio";
   document.querySelectorAll(".tab").forEach(function (tab) {
     tab.classList.toggle("active", tab.dataset.view === viewName);

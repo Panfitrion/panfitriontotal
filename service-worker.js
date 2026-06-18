@@ -1,4 +1,4 @@
-var CACHE_NAME = "panfitrion-offline-v15";
+var CACHE_NAME = "panfitrion-offline-v16";
 var OFFLINE_FILES = [
   "./",
   "index.html",
