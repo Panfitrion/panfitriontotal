@@ -307,6 +307,7 @@ function renderVisualCafeCards() {
       if (card.dataset.action === "account") {
         document.querySelector("#accountsIntro").style.display = "none";
         document.querySelector("#accountWorkbench").classList.add("active");
+        renderAccountHistory();
       }
     });
   });
@@ -359,6 +360,7 @@ function saveDelivery() {
   if (existingIndex >= 0) data.entregas[existingIndex] = entrega;else data.entregas.push(entrega);
   writeData(data);
   renderDeliveryLog();
+  renderAccountHistory();
   showToast("Entrega guardada");
 }
 function renderDeliveryLog() {
@@ -429,6 +431,36 @@ function getAccountData() {
     detalle: detalle,
     totalNeto: totalNeto
   };
+}
+function renderAccountHistory() {
+  var container = document.querySelector("#accountHistory");
+  if (!container) return;
+  var account = getAccountData();
+  var hasAny = false;
+  var html = account.fechas.map(function (date, index) {
+    var lines = account.detalle.map(function (item) {
+      var qty = item.cantidades[index] || 0;
+      var returned = item.devueltos[index] || 0;
+      var net = qty - returned;
+      if (!qty && !returned) return "";
+      hasAny = true;
+      return "<div class=\"history-product\"><span><b>".concat(item.nombre, "</b><small>").concat(money(item.precio), " c/u</small></span><span>").concat(qty, " ent.").concat(returned ? " / " + returned + " dev." : "", "</span><strong>").concat(money(net * item.precio), "</strong></div>");
+    }).filter(function (line) {
+      return line;
+    }).join("");
+    var dayTotal = account.detalle.reduce(function (sum, item) {
+      var qty = item.cantidades[index] || 0;
+      var returned = item.devueltos[index] || 0;
+      return sum + (qty - returned) * item.precio;
+    }, 0);
+    return "<div class=\"history-day\"><div class=\"history-day-head\"><span>".concat(formatDisplayDate(date).dayName, "</span><strong>").concat(formatDisplayDate(date).short, "</strong></div>").concat(lines || "<div class=\"history-empty\">Sin entregas registradas.</div>", "<div class=\"history-total\"><span>Total del dia</span><strong>").concat(money(dayTotal), "</strong></div></div>");
+  }).join("");
+  container.innerHTML = html + "<div class=\"history-week-total\"><span>Total semana</span><strong>".concat(money(account.totalNeto), "</strong></div>");
+  if (!hasAny) {
+    container.classList.add("empty");
+  } else {
+    container.classList.remove("empty");
+  }
 }
 function generatePdf() {
   var account = getAccountData();
@@ -773,6 +805,7 @@ function boot() {
   selectedCafeId = selectedCafeId || ((_data$cafeterias$2 = data.cafeterias[0]) === null || _data$cafeterias$2 === void 0 ? void 0 : _data$cafeterias$2.id);
   fillSelect(document.querySelector("#accountCafe"), data.cafeterias);
   fillWeekSelect();
+  renderAccountHistory();
   renderHeaderDate();
   renderVisualCafeCards();
   renderCafeList();
@@ -811,6 +844,8 @@ document.querySelector("#startDeliveryButton").addEventListener("click", functio
 });
 document.querySelector("#saveDeliveryButton").addEventListener("click", saveDelivery);
 document.querySelector("#pdfButton").addEventListener("click", generatePdf);
+document.querySelector("#accountCafe").addEventListener("change", renderAccountHistory);
+document.querySelector("#accountStart").addEventListener("change", renderAccountHistory);
 document.querySelector("#backupButton").addEventListener("click", createBackup);
 document.querySelector("#seedButton").addEventListener("click", seedData);
 document.querySelector("#addCafeButton").addEventListener("click", addCafe);
