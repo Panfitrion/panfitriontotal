@@ -225,6 +225,7 @@ var appData = loadLocalStorageData() || structuredClone(demoData);
 var selectedCafeId = "";
 var selectedDate = todayKey();
 var selectedAccountStart = mondayOfWeek(todayKey());
+var currentView = "inicio";
 var activeNumberButton = null;
 var activeWheelValue = 0;
 var wheelScrollTimer = null;
@@ -987,20 +988,74 @@ function showView(viewName) {
     cuentas: "Cuentas",
     catalogos: "Datos"
   };
+  currentView = titles[viewName] ? viewName : "inicio";
   var app = document.querySelector(".phone-app");
   if (app) {
-    app.dataset.view = viewName;
+    app.dataset.view = currentView;
     app.classList.remove("view-shift");
     void app.offsetWidth;
     app.classList.add("view-shift");
   }
-  document.querySelector("#screenTitle").textContent = titles[viewName] || "Inicio";
-  document.querySelectorAll(".tab").forEach(function (tab) {
-    tab.classList.toggle("active", tab.dataset.view === viewName);
-  });
+  document.querySelector("#screenTitle").textContent = titles[currentView] || "Inicio";
   document.querySelectorAll(".view").forEach(function (view) {
-    view.classList.toggle("active", view.id === "view-".concat(viewName));
+    view.classList.toggle("active", view.id === "view-".concat(currentView));
   });
+  renderSideMenu(currentView);
+  closeSideMenu();
+}
+function menuIcon(viewName) {
+  switch (viewName) {
+    case "entregas":
+      return "+";
+    case "cuentas":
+      return "▤";
+    case "catalogos":
+      return "◦";
+    default:
+      return "⌂";
+  }
+}
+function renderSideMenu(activeView) {
+  var menu = document.querySelector("#sideMenu");
+  if (!menu) return;
+  var titles = {
+    inicio: "Inicio",
+    entregas: "Entregas",
+    cuentas: "Cuentas",
+    catalogos: "Datos"
+  };
+  var order = ["inicio", "entregas", "cuentas", "catalogos"];
+  var week = document.querySelector("#headerWeek");
+  var weekText = week ? week.textContent : "";
+  var links = order.map(function (viewName) {
+    return "\n      <button class=\"side-link ".concat(activeView === viewName ? "active" : "", "\" data-menu-view=\"").concat(viewName, "\" type=\"button\">\n        <span>").concat(menuIcon(viewName), "</span>\n        <strong>").concat(titles[viewName], "</strong>\n      </button>\n    ");
+  }).join("");
+  menu.innerHTML = "\n    <div class=\"side-head\">\n      <span>PANFITRION</span>\n      <button class=\"icon-btn\" data-side-close type=\"button\" aria-label=\"Cerrar menu\">×</button>\n    </div>\n    <div class=\"side-title\">\n      <strong>".concat(titles[activeView] || "Inicio", "</strong>\n      <small>").concat(weekText, "</small>\n    </div>\n    <div class=\"side-links\">").concat(links, "</div>\n    <div class=\"side-foot\">Gestion local offline</div>\n  ");
+  menu.querySelector("[data-side-close]").addEventListener("click", closeSideMenu);
+  menu.querySelectorAll("[data-menu-view]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      return showView(button.dataset.menuView);
+    });
+  });
+}
+function openSideMenu() {
+  var layer = document.querySelector("#sideMenuLayer");
+  var button = document.querySelector("#menuButton");
+  renderSideMenu(currentView);
+  if (layer) {
+    layer.classList.add("show");
+    layer.setAttribute("aria-hidden", "false");
+  }
+  if (button) button.setAttribute("aria-expanded", "true");
+}
+function closeSideMenu() {
+  var layer = document.querySelector("#sideMenuLayer");
+  var button = document.querySelector("#menuButton");
+  if (layer) {
+    layer.classList.remove("show");
+    layer.setAttribute("aria-hidden", "true");
+  }
+  if (button) button.setAttribute("aria-expanded", "false");
 }
 function boot() {
   var _data$cafeterias$2;
@@ -1017,11 +1072,12 @@ function boot() {
   renderDeliveryProducts();
   renderDeliveryLog();
   renderCatalogs();
+  renderSideMenu(currentView);
 }
-document.querySelectorAll(".tab").forEach(function (button) {
-  button.addEventListener("click", function () {
-    return showView(button.dataset.view);
-  });
+document.querySelector("#menuButton").addEventListener("click", openSideMenu);
+document.querySelector("[data-close-side-menu]").addEventListener("click", closeSideMenu);
+document.addEventListener("keydown", function (event) {
+  if (event.key === "Escape") closeSideMenu();
 });
 document.querySelectorAll("[data-open]").forEach(function (button) {
   button.addEventListener("click", function () {
