@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#f6f5f2">
+    <title>PANFITRION - Prototipo</title>
+    <script src="./vendor/jspdf.umd.min.js"></script>
+    <script src="./vendor/jspdf.plugin.autotable.min.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <div class="phone-app">
+      <header>
+        <div class="brand-mark">
+          <img src="./assets/logo-panfitrion.png" alt="">
+        </div>
+        <div class="header-left">
+          <p>PANFITRION</p>
+          <h1 id="screenTitle">Inicio</h1>
+        </div>
+        <div class="week-pill" id="headerWeek"></div>
+      </header>
+
+      <main>
+      <section id="view-inicio" class="view active">
+        <div class="summary-card">
+          <span>Semana activa</span>
+          <strong id="homeWeekLabel"></strong>
+          <small>Registra entregas y genera cuentas con el formato del PDF actual.</small>
+        </div>
+
+        <div class="home-grid">
+          <button class="home-card" data-open="entregas" type="button">
+            <span>Entregas</span>
+            <strong>Registrar entregas</strong>
+            <small>Captura diaria por cafeteria y producto.</small>
+          </button>
+          <button class="home-card" data-open="cuentas" type="button">
+            <span>Cuentas</span>
+            <strong>Generar cuentas</strong>
+            <small>Vista semanal con formato del PDF actual.</small>
+          </button>
+          <button class="home-card" data-open="catalogos" type="button">
+            <span>Catalogos</span>
+            <strong>Catalogos</strong>
+            <small>Cafeterias, productos y precios.</small>
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Flujo</h2>
+          </div>
+          <div class="flow-list">
+            <div><b>Entregas</b><span>Se registran cada dia.</span></div>
+            <div><b>Cuentas</b><span>Se calculan al final de la semana.</span></div>
+            <div><b>PDF</b><span>Debe conservar el formato actual.</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-entregas" class="view">
+        <div class="module-intro" id="deliveriesIntro">
+          <span>Entregas</span>
+          <h2>Elige cafeteria y fecha</h2>
+          <p>Despues se muestran los productos para registrar cantidades.</p>
+          <div class="visual-cafe-grid" id="deliveryCafeCards"></div>
+          <button id="startDeliveryButton" class="save-bar" type="button">Registrar entrega</button>
+        </div>
+
+        <div class="workbench" id="deliveryWorkbench">
+          <div class="card">
+            <div class="card-header"><h2>Fecha de entrega</h2></div>
+            <div class="date-row">
+              <button class="date-nav-btn" id="prevDayButton" type="button">‹</button>
+              <div class="date-center">
+                <div class="day-name" id="deliveryDayName"></div>
+                <div class="date-full" id="deliveryDateText"></div>
+              </div>
+              <button class="date-nav-btn" id="nextDayButton" type="button">›</button>
+              <button class="today-btn" id="todayButton" type="button">Hoy</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h2>Cafeteria</h2></div>
+            <div id="cafeSelectList" class="cafe-select-list"></div>
+          </div>
+
+          <div class="card" id="productsCard">
+            <div class="card-header">
+              <h2>Productos entregados</h2>
+            </div>
+            <div id="deliveryProducts" class="product-list"></div>
+          </div>
+
+          <button id="saveDeliveryButton" class="save-bar" type="button">Guardar entrega</button>
+
+          <div class="card">
+            <div class="card-header"><h2>Entregas guardadas</h2></div>
+            <div id="deliveryLog" class="saved-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-cuentas" class="view">
+        <div class="module-intro" id="accountsIntro">
+          <span>Cuentas</span>
+          <h2>Elige una cafeteria</h2>
+          <p>La cuenta se arma con las entregas registradas de la semana.</p>
+          <div class="visual-cafe-grid" id="accountCafeCards"></div>
+        </div>
+
+        <div class="workbench" id="accountWorkbench">
+          <div class="card">
+            <div class="card-header"><h2>Cuenta semanal</h2></div>
+            <div class="form-stack">
+              <label>
+                Cafeteria
+                <select id="accountCafe"></select>
+              </label>
+            <label>
+              Semana
+              <select id="accountStart"></select>
+              </label>
+              <button id="pdfButton" class="form-btn secondary" type="button">Generar PDF</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-catalogos" class="view">
+        <div class="module-intro">
+          <span>Datos</span>
+          <h2>Agregar informacion</h2>
+          <p>Primero crea cafeterias. Luego agrega productos con precio para cada cafeteria.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>Nueva cafeteria</h2></div>
+          <div class="form-stack">
+            <label>
+              Nombre
+              <input id="newCafeName" type="text" autocomplete="off" placeholder="Ej. Amin">
+            </label>
+            <button id="addCafeButton" class="form-btn" type="button">Agregar cafeteria</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>Cafeterias</h2></div>
+          <div id="catalogCafeList" class="catalog-list"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>Nuevo producto</h2></div>
+          <div class="form-stack">
+            <label>
+              Cafeteria
+              <select id="productCafe"></select>
+            </label>
+            <label>
+              Producto
+              <input id="newProductName" type="text" autocomplete="off" placeholder="Ej. Croissant">
+            </label>
+            <label class="toggle-row">
+              <span>Activar devoluciones</span>
+              <input id="newProductReturns" type="checkbox">
+            </label>
+            <label>
+              Precio
+              <input id="newProductPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+            </label>
+            <button id="addProductButton" class="form-btn" type="button">Agregar producto</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h2>Productos y precios</h2></div>
+          <div id="catalogProductList" class="catalog-list"></div>
+        </div>
+        <button id="backupButton" class="save-bar" type="button">Crear respaldo</button>
+        <button id="seedButton" class="save-bar secondary" type="button">Cargar datos demo</button>
+      </section>
+      </main>
+
+      <nav class="bottom-tabs" aria-label="Modulos">
+        <button class="tab active" data-view="inicio" type="button">
+          <span>⌂</span>
+          Inicio
+        </button>
+        <button class="tab" data-view="entregas" type="button">
+          <span>＋</span>
+          Entregas
+        </button>
+        <button class="tab" data-view="cuentas" type="button">
+          <span>▤</span>
+          Cuentas
+        </button>
+        <button class="tab" data-view="catalogos" type="button">
+          <span>◦</span>
+          Datos
+        </button>
+      </nav>
+    </div>
+
+    <div id="numberWheelSheet" class="number-sheet" aria-hidden="true">
+      <div class="number-backdrop" data-close-wheel></div>
+      <div class="number-panel">
+        <div class="number-panel-header">
+          <span id="numberWheelTitle">Cantidad</span>
+          <button id="closeNumberWheel" class="icon-btn" type="button">×</button>
+        </div>
+        <div id="numberWheel" class="number-wheel"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
