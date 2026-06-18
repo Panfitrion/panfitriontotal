@@ -149,44 +149,53 @@ main {
   }
 }
 
-.summary-card {
+.home-hero {
   display: grid;
-  gap: 6px;
+  gap: 22px;
   margin-bottom: 14px;
-  padding: 20px;
-  border: 1px solid var(--rule);
-  border-radius: 20px;
-  background: #fffefa;
+  min-height: 176px;
+  border: 1px solid rgba(23,23,23,0.08);
+  border-radius: 22px;
+  background:
+    linear-gradient(145deg, rgba(255,255,255,0.86), rgba(238,236,230,0.88)),
+    #fffefa;
   color: var(--ink);
-  box-shadow: var(--shadow);
+  padding: 22px;
+  box-shadow: 0 18px 48px rgba(23,23,23,0.09);
 }
 
-.summary-card span,
+.home-hero span,
 .home-card span {
   color: var(--accent);
   font-family: "SF Mono", ui-monospace, Menlo, monospace;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
-.summary-card strong {
+.home-hero strong {
+  display: block;
+  margin-top: 8px;
   font-family: "New York", ui-serif, Georgia, serif;
-  font-size: 30px;
+  font-size: 38px;
   font-weight: 400;
   letter-spacing: 0;
+  line-height: 0.95;
 }
 
-.summary-card small {
+.home-hero small {
+  align-self: end;
   color: var(--muted);
-  font-size: 13px;
-  line-height: 1.35;
+  font-family: "SF Mono", ui-monospace, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.6px;
 }
 
 .home-grid {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 14px;
 }
 
@@ -296,17 +305,19 @@ main {
 .home-card {
   position: relative;
   display: grid;
-  gap: 6px;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 14px;
   width: 100%;
-  min-height: 118px;
-  border: 1px solid var(--rule);
+  min-height: 84px;
+  border: 1px solid rgba(23,23,23,0.08);
   border-radius: 16px;
-  background: rgba(255,253,249,0.92);
+  background: rgba(255,254,250,0.94);
   color: var(--ink);
-  padding: 18px 48px 18px 18px;
+  padding: 14px 16px;
   text-align: left;
-  box-shadow: var(--shadow);
-  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+  box-shadow: 0 10px 28px rgba(23,23,23,0.06);
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
 }
 
 .home-card:active,
@@ -322,23 +333,26 @@ main {
 
 .home-card::after {
   content: "›";
-  position: absolute;
-  right: 18px;
-  top: 50%;
   color: var(--muted);
-  font-size: 30px;
-  transform: translateY(-50%);
+  font-size: 26px;
+  line-height: 1;
 }
 
 .home-card strong {
+  display: block;
   font-family: "New York", ui-serif, Georgia, serif;
-  font-size: 25px;
+  font-size: 24px;
   font-weight: 400;
   letter-spacing: 0;
+  line-height: 1;
+}
+
+.home-card small {
+  display: block;
+  margin-top: 4px;
 }
 
 .home-card small,
-.flow-list span,
 .catalog-row small {
   color: var(--muted);
   font-size: 13px;
@@ -370,11 +384,6 @@ main {
   text-transform: uppercase;
 }
 
-.flow-list {
-  display: grid;
-}
-
-.flow-list div,
 .catalog-row,
 .saved-row {
   display: grid;
@@ -383,7 +392,6 @@ main {
   padding: 15px 16px;
 }
 
-.flow-list div:last-child,
 .catalog-row:last-child,
 .saved-row:last-child {
   border-bottom: 0;
