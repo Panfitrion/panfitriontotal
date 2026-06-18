@@ -103,7 +103,30 @@ var demoData = {
   entregas: [],
   ajustes: []
 };
-var appData = structuredClone(demoData);
+var DATA_KEY = "panfitrion.data.v1";
+function normalizeData(data) {
+  var fallback = structuredClone(demoData);
+  if (!data || _typeof(data) !== "object") return fallback;
+  return {
+    version: data.version || fallback.version,
+    cafeterias: Array.isArray(data.cafeterias) && data.cafeterias.length ? data.cafeterias : fallback.cafeterias,
+    productos: Array.isArray(data.productos) && data.productos.length ? data.productos : fallback.productos,
+    precios: Array.isArray(data.precios) ? data.precios : fallback.precios,
+    entregas: Array.isArray(data.entregas) ? data.entregas : fallback.entregas,
+    ajustes: Array.isArray(data.ajustes) ? data.ajustes : fallback.ajustes
+  };
+}
+function loadStoredData() {
+  try {
+    var stored = window.localStorage.getItem(DATA_KEY);
+    if (!stored) return structuredClone(demoData);
+    return normalizeData(JSON.parse(stored));
+  } catch (error) {
+    console.error("No se pudo cargar la base local", error);
+    return structuredClone(demoData);
+  }
+}
+var appData = loadStoredData();
 var selectedCafeId = "caf_amin";
 var selectedDate = todayKey();
 var activeNumberButton = null;
@@ -113,7 +136,12 @@ function readData() {
   return structuredClone(appData);
 }
 function writeData(data) {
-  appData = structuredClone(data);
+  appData = normalizeData(data);
+  try {
+    window.localStorage.setItem(DATA_KEY, JSON.stringify(appData));
+  } catch (error) {
+    console.error("No se pudo guardar la base local", error);
+  }
 }
 function todayKey() {
   return dateKey(new Date());
