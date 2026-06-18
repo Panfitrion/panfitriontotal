@@ -377,6 +377,26 @@ function selectWheelValue(value) {
 function useWheelValue() {
   selectWheelValue(activeWheelValue);
 }
+function openModal(id) {
+  var modal = document.querySelector("#".concat(id));
+  if (!modal) return;
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+  var input = modal.querySelector("input, select");
+  if (input) setTimeout(function () {
+    return input.focus();
+  }, 180);
+}
+function closeModal(modal) {
+  if (!modal) return;
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
+}
+function closeAllModals() {
+  document.querySelectorAll(".modal-sheet.show").forEach(function (modal) {
+    return closeModal(modal);
+  });
+}
 function fillSelect(select, items) {
   select.innerHTML = items.map(function (item) {
     return "<option value=\"".concat(item.id, "\">").concat(item.nombre, "</option>");
@@ -801,6 +821,7 @@ function addCafe() {
   selectedCafeId = cafe.id;
   input.value = "";
   refreshAfterCatalogChange();
+  closeAllModals();
   showToast("Cafeteria agregada");
 }
 function addProduct() {
@@ -853,6 +874,7 @@ function addProduct() {
   refreshAfterCatalogChange({
     keepProductCafeId: cafeId
   });
+  closeAllModals();
   showToast("Producto agregado");
 }
 function deleteCafe(cafeId) {
@@ -1048,6 +1070,17 @@ document.querySelector("#restoreInput").addEventListener("change", function (eve
   var file = event.target.files && event.target.files[0];
   restoreBackupFile(file);
   event.target.value = "";
+});
+document.querySelector("#openCafeModal").addEventListener("click", function () {
+  openModal("cafeModal");
+});
+document.querySelector("#openProductModal").addEventListener("click", function () {
+  openModal("productModal");
+});
+document.querySelectorAll("[data-close-modal]").forEach(function (button) {
+  button.addEventListener("click", function () {
+    closeModal(button.closest(".modal-sheet"));
+  });
 });
 document.querySelector("#seedButton").addEventListener("click", seedData);
 document.querySelector("#addCafeButton").addEventListener("click", addCafe);

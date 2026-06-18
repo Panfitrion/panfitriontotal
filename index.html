@@ -134,47 +134,17 @@
       <section id="view-catalogos" class="view">
         <div class="module-intro">
           <span>Datos</span>
-          <h2>Agregar informacion</h2>
-          <p>Primero crea cafeterias. Luego agrega productos con precio para cada cafeteria.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h2>Nueva cafeteria</h2></div>
-          <div class="form-stack">
-            <label>
-              Nombre
-              <input id="newCafeName" type="text" autocomplete="off" placeholder="Ej. Amin">
-            </label>
-            <button id="addCafeButton" class="form-btn" type="button">Agregar cafeteria</button>
+          <h2>Catalogo</h2>
+          <p>Cafeterias, productos y precios.</p>
+          <div class="catalog-actions">
+            <button id="openCafeModal" class="form-btn" type="button">Nueva cafeteria</button>
+            <button id="openProductModal" class="form-btn secondary" type="button">Nuevo producto</button>
           </div>
         </div>
 
         <div class="card">
           <div class="card-header"><h2>Cafeterias</h2></div>
           <div id="catalogCafeList" class="catalog-list"></div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h2>Nuevo producto</h2></div>
-          <div class="form-stack">
-            <label>
-              Cafeteria
-              <select id="productCafe"></select>
-            </label>
-            <label>
-              Producto
-              <input id="newProductName" type="text" autocomplete="off" placeholder="Ej. Croissant">
-            </label>
-            <label class="toggle-row">
-              <span>Activar devoluciones</span>
-              <input id="newProductReturns" type="checkbox">
-            </label>
-            <label>
-              Precio
-              <input id="newProductPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
-            </label>
-            <button id="addProductButton" class="form-btn" type="button">Agregar producto</button>
-          </div>
         </div>
 
         <div class="card">
@@ -206,6 +176,52 @@
           Datos
         </button>
       </nav>
+    </div>
+
+    <div id="cafeModal" class="modal-sheet" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <span>Nueva cafeteria</span>
+          <button class="icon-btn" data-close-modal type="button">×</button>
+        </div>
+        <div class="form-stack">
+          <label>
+            Nombre
+            <input id="newCafeName" type="text" autocomplete="off" placeholder="Ej. Amin">
+          </label>
+          <button id="addCafeButton" class="form-btn" type="button">Agregar cafeteria</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="productModal" class="modal-sheet" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <span>Nuevo producto</span>
+          <button class="icon-btn" data-close-modal type="button">×</button>
+        </div>
+        <div class="form-stack">
+          <label>
+            Cafeteria
+            <select id="productCafe"></select>
+          </label>
+          <label>
+            Producto
+            <input id="newProductName" type="text" autocomplete="off" placeholder="Ej. Croissant">
+          </label>
+          <label class="toggle-row">
+            <span>Activar devoluciones</span>
+            <input id="newProductReturns" type="checkbox">
+          </label>
+          <label>
+            Precio
+            <input id="newProductPrice" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+          </label>
+          <button id="addProductButton" class="form-btn" type="button">Agregar producto</button>
+        </div>
+      </div>
     </div>
 
     <div id="numberWheelSheet" class="number-sheet" aria-hidden="true">
