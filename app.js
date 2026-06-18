@@ -316,6 +316,7 @@ function setNumberButtonValue(button, value) {
   button.dataset.value = String(normalized);
   button.textContent = normalized;
   button.classList.toggle("has-value", normalized > 0);
+  updateDeliverySummary();
 }
 function setWheelValue(value) {
   activeWheelValue = Math.max(0, Number(value) || 0);
@@ -451,6 +452,7 @@ function renderCafeList() {
       selectedCafeId = option.dataset.cafeId;
       renderCafeList();
       renderDeliveryProducts();
+      updateDeliverySummary();
     });
   });
 }
@@ -500,10 +502,12 @@ function renderDeliveryProducts() {
   var container = document.querySelector("#deliveryProducts");
   if (!selectedCafeId) {
     container.innerHTML = "<div class=\"empty-state\">Agrega una cafeteria en Datos.</div>";
+    updateDeliverySummary();
     return;
   }
   if (!rows.length) {
     container.innerHTML = "<div class=\"empty-state\">Agrega productos para esta cafeteria en Datos.</div>";
+    updateDeliverySummary();
     return;
   }
   container.innerHTML = rows.map(function (row) {
@@ -513,14 +517,40 @@ function renderDeliveryProducts() {
     });
     var value = (_saved$cantidad = saved === null || saved === void 0 ? void 0 : saved.cantidad) !== null && _saved$cantidad !== void 0 ? _saved$cantidad : 0;
     var returned = (_saved$devuelto = saved === null || saved === void 0 ? void 0 : saved.devuelto) !== null && _saved$devuelto !== void 0 ? _saved$devuelto : 0;
-    var returnsInput = row.producto.permiteDevolucion ? "<label class=\"return-field\">\n          Devuelto\n          <button class=\"return-input number-trigger ".concat(returned > 0 ? "has-value" : "", "\" type=\"button\" data-kind=\"return\" data-product-id=\"").concat(row.productoId, "\" data-value=\"").concat(returned, "\">").concat(returned, "</button>\n        </label>") : "";
-    return "\n      <div class=\"product-row ".concat(row.producto.permiteDevolucion ? "has-return" : "", "\">\n        <div class=\"product-name\">\n          ").concat(row.producto.nombre, "\n          ").concat(row.producto.permiteDevolucion ? "<small>Permite devueltos</small>" : "", "\n        </div>\n        <label class=\"qty-field\">\n          Entregado\n          <button class=\"qty-input number-trigger ").concat(value > 0 ? "has-value" : "", "\" type=\"button\" data-kind=\"qty\" data-product-id=\"").concat(row.productoId, "\" data-value=\"").concat(value, "\">").concat(value, "</button>\n        </label>\n        ").concat(returnsInput, "\n      </div>\n    ");
+    var returnsInput = row.producto.permiteDevolucion ? "<div class=\"return-field pos-control is-return\">\n          <span>Devuelto</span>\n          <div class=\"stepper\">\n            <button class=\"step-btn\" type=\"button\" data-step=\"-1\" data-target-kind=\"return\">−</button>\n            <button class=\"return-input number-trigger ".concat(returned > 0 ? "has-value" : "", "\" type=\"button\" data-kind=\"return\" data-product-id=\"").concat(row.productoId, "\" data-value=\"").concat(returned, "\">").concat(returned, "</button>\n            <button class=\"step-btn\" type=\"button\" data-step=\"1\" data-target-kind=\"return\">+</button>\n          </div>\n        </div>") : "";
+    return "\n      <div class=\"product-row ".concat(row.producto.permiteDevolucion ? "has-return" : "", "\">\n        <div class=\"product-name\">\n          ").concat(row.producto.nombre, "\n          ").concat(row.producto.permiteDevolucion ? "<small>Devuelve si aplica</small>" : "", "\n        </div>\n        <div class=\"qty-field pos-control\">\n          <span>Entregado</span>\n          <div class=\"stepper\">\n            <button class=\"step-btn\" type=\"button\" data-step=\"-1\" data-target-kind=\"qty\">−</button>\n            <button class=\"qty-input number-trigger ").concat(value > 0 ? "has-value" : "", "\" type=\"button\" data-kind=\"qty\" data-product-id=\"").concat(row.productoId, "\" data-value=\"").concat(value, "\">").concat(value, "</button>\n            <button class=\"step-btn\" type=\"button\" data-step=\"1\" data-target-kind=\"qty\">+</button>\n          </div>\n        </div>\n        ").concat(returnsInput, "\n      </div>\n    ");
   }).join("");
   container.querySelectorAll(".number-trigger").forEach(function (button) {
     button.addEventListener("click", function () {
       return openNumberWheel(button);
     });
   });
+  container.querySelectorAll(".step-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var kind = button.dataset.targetKind;
+      var target = button.closest(".pos-control").querySelector("[data-kind=\"".concat(kind, "\"]"));
+      var nextValue = (Number(target.dataset.value) || 0) + Number(button.dataset.step);
+      setNumberButtonValue(target, nextValue);
+    });
+  });
+  updateDeliverySummary();
+}
+function updateDeliverySummary() {
+  var summary = document.querySelector("#deliverySummary");
+  var saveButton = document.querySelector("#saveDeliveryButton");
+  if (!summary || !saveButton) return;
+  var data = readData();
+  var cafe = data.cafeterias.find(function (item) {
+    return item.id === selectedCafeId;
+  });
+  var total = _toConsumableArray(document.querySelectorAll("#deliveryProducts .qty-input")).reduce(function (sum, button) {
+    return sum + (Number(button.dataset.value) || 0);
+  }, 0);
+  var returned = _toConsumableArray(document.querySelectorAll("#deliveryProducts .return-input")).reduce(function (sum, button) {
+    return sum + (Number(button.dataset.value) || 0);
+  }, 0);
+  summary.textContent = returned ? "".concat(total, " ent. / ").concat(returned, " dev.") : "".concat(total, " piezas");
+  saveButton.textContent = cafe ? "Guardar ".concat(cafe.nombre, " · ").concat(total, " piezas") : "Guardar entrega";
 }
 function saveDelivery() {
   if (!selectedCafeId) return showToast("Agrega una cafeteria", "error");
@@ -551,6 +581,7 @@ function saveDelivery() {
   writeData(data);
   renderDeliveryLog();
   renderAccountHistory();
+  updateDeliverySummary();
   showToast("Entrega guardada");
 }
 function renderDeliveryLog() {

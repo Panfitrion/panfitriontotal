@@ -57,8 +57,9 @@
       </section>
 
       <section id="view-entregas" class="view">
-        <div class="workbench active" id="deliveryWorkbench">
-          <div class="card">
+        <div class="workbench active pos-workbench" id="deliveryWorkbench">
+          <div class="pos-top">
+          <div class="card date-card">
             <div class="card-header"><h2>Fecha de entrega</h2></div>
             <div class="date-row">
               <button class="date-nav-btn" id="prevDayButton" type="button">‹</button>
@@ -71,24 +72,26 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card cafe-card">
             <div class="card-header"><h2>Cafeteria</h2></div>
             <div id="cafeSelectList" class="cafe-select-list"></div>
           </div>
+          </div>
 
-          <div class="card" id="productsCard">
+          <div class="card pos-products-card" id="productsCard">
             <div class="card-header">
               <h2>Productos entregados</h2>
+              <strong id="deliverySummary" class="delivery-summary">0 piezas</strong>
             </div>
             <div id="deliveryProducts" class="product-list"></div>
           </div>
 
-          <button id="saveDeliveryButton" class="save-bar" type="button">Guardar entrega</button>
+          <button id="saveDeliveryButton" class="save-bar pos-save" type="button">Guardar entrega</button>
 
-          <div class="card">
-            <div class="card-header"><h2>Entregas guardadas</h2></div>
+          <details class="delivery-history">
+            <summary>Entregas guardadas</summary>
             <div id="deliveryLog" class="saved-list"></div>
-          </div>
+          </details>
         </div>
       </section>
 
