@@ -1,4 +1,4 @@
-var CACHE_NAME = "panfitrion-offline-v5";
+var CACHE_NAME = "panfitrion-offline-v6";
 var OFFLINE_FILES = [
   "./",
   "index.html",
@@ -6,7 +6,10 @@ var OFFLINE_FILES = [
   "app.js",
   "jspdf.umd.min.js",
   "jspdf.plugin.autotable.min.js",
-  "manifest.webmanifest"
+  "manifest.webmanifest",
+  "apple-touch-icon.png",
+  "icon-192.png",
+  "icon-512.png"
 ];
 
 self.addEventListener("install", function (event) {
