@@ -954,6 +954,30 @@ th {
   transform: translateY(0) scale(1);
 }
 
+.save-status {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: calc(92px + var(--safe-bottom));
+  z-index: 190;
+  border: 1px solid rgba(23,23,23,0.08);
+  border-radius: 999px;
+  background: rgba(255,254,250,0.94);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0;
+  padding: 8px 12px;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  backdrop-filter: blur(18px);
+}
+
+.save-status.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .number-sheet {
   position: fixed;
   inset: 0;

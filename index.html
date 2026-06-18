@@ -191,6 +191,8 @@
           <div id="catalogProductList" class="catalog-list"></div>
         </div>
         <button id="backupButton" class="save-bar" type="button">Crear respaldo</button>
+        <button id="restoreButton" class="save-bar secondary" type="button">Restaurar respaldo</button>
+        <input id="restoreInput" type="file" accept=".panfitrion,application/json" hidden>
         <button id="seedButton" class="save-bar secondary" type="button">Cargar datos demo</button>
       </section>
       </main>
@@ -232,6 +234,7 @@
     </div>
 
     <div id="toast" class="toast"></div>
+    <div id="saveStatus" class="save-status">Guardado</div>
     <script src="./app.js"></script>
     <script>
       if ("serviceWorker" in navigator) {

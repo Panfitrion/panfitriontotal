@@ -104,6 +104,11 @@ var demoData = {
   ajustes: []
 };
 var DATA_KEY = "panfitrion.data.v1";
+var DB_NAME = "panfitrion-db";
+var DB_VERSION = 1;
+var DB_STORE = "records";
+var DB_DATA_ID = "main";
+var dbConnection = null;
 function normalizeData(data) {
   var fallback = structuredClone(demoData);
   if (!data || _typeof(data) !== "object") return fallback;
@@ -116,17 +121,107 @@ function normalizeData(data) {
     ajustes: Array.isArray(data.ajustes) ? data.ajustes : fallback.ajustes
   };
 }
-function loadStoredData() {
+function loadLocalStorageData() {
   try {
     var stored = window.localStorage.getItem(DATA_KEY);
-    if (!stored) return structuredClone(demoData);
+    if (!stored) return null;
     return normalizeData(JSON.parse(stored));
   } catch (error) {
     console.error("No se pudo cargar la base local", error);
-    return structuredClone(demoData);
+    return null;
   }
 }
-var appData = loadStoredData();
+function openDatabase() {
+  return new Promise(function (resolve, reject) {
+    if (!("indexedDB" in window)) {
+      reject(new Error("IndexedDB no disponible"));
+      return;
+    }
+    var request = window.indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = function (event) {
+      var db = event.target.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) {
+        db.createObjectStore(DB_STORE, {
+          keyPath: "id"
+        });
+      }
+    };
+    request.onsuccess = function (event) {
+      dbConnection = event.target.result;
+      resolve(dbConnection);
+    };
+    request.onerror = function () {
+      reject(request.error);
+    };
+  });
+}
+function readDatabaseData() {
+  return openDatabase().then(function (db) {
+    return new Promise(function (resolve, reject) {
+      var transaction = db.transaction(DB_STORE, "readonly");
+      var store = transaction.objectStore(DB_STORE);
+      var request = store.get(DB_DATA_ID);
+      request.onsuccess = function () {
+        resolve(request.result ? normalizeData(request.result.data) : null);
+      };
+      request.onerror = function () {
+        reject(request.error);
+      };
+    });
+  });
+}
+function persistDatabaseData(data) {
+  return openDatabase().then(function (db) {
+    return new Promise(function (resolve, reject) {
+      var transaction = db.transaction(DB_STORE, "readwrite");
+      var store = transaction.objectStore(DB_STORE);
+      var request = store.put({
+        id: DB_DATA_ID,
+        updatedAt: new Date().toISOString(),
+        data: normalizeData(data)
+      });
+      request.onsuccess = function () {
+        resolve();
+      };
+      request.onerror = function () {
+        reject(request.error);
+      };
+    });
+  });
+}
+function saveLocalStorageData(data) {
+  try {
+    window.localStorage.setItem(DATA_KEY, JSON.stringify(normalizeData(data)));
+  } catch (error) {
+    console.error("No se pudo guardar copia localStorage", error);
+  }
+}
+function showSavedStatus() {
+  var label = document.querySelector("#saveStatus");
+  if (!label) return;
+  label.textContent = "Guardado";
+  label.classList.add("show");
+  clearTimeout(showSavedStatus.timer);
+  showSavedStatus.timer = setTimeout(function () {
+    label.classList.remove("show");
+  }, 1400);
+}
+function initStorage() {
+  var localData = loadLocalStorageData();
+  appData = localData || structuredClone(demoData);
+  return readDatabaseData().then(function (dbData) {
+    if (dbData) {
+      appData = dbData;
+      saveLocalStorageData(appData);
+    } else {
+      return persistDatabaseData(appData);
+    }
+    return Promise.resolve();
+  }).catch(function (error) {
+    console.error("IndexedDB no disponible, usando copia localStorage", error);
+  });
+}
+var appData = loadLocalStorageData() || structuredClone(demoData);
 var selectedCafeId = "caf_amin";
 var selectedDate = todayKey();
 var activeNumberButton = null;
@@ -137,11 +232,11 @@ function readData() {
 }
 function writeData(data) {
   appData = normalizeData(data);
-  try {
-    window.localStorage.setItem(DATA_KEY, JSON.stringify(appData));
-  } catch (error) {
-    console.error("No se pudo guardar la base local", error);
-  }
+  saveLocalStorageData(appData);
+  persistDatabaseData(appData).then(showSavedStatus).catch(function (error) {
+    console.error("No se pudo guardar en IndexedDB", error);
+    showToast("Guardado de respaldo localStorage", "error");
+  });
 }
 function todayKey() {
   return dateKey(new Date());
@@ -786,6 +881,26 @@ function createBackup() {
   URL.revokeObjectURL(url);
   showToast("Respaldo creado");
 }
+function restoreBackupFile(file) {
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function () {
+    try {
+      var parsed = JSON.parse(String(reader.result || "{}"));
+      var restored = normalizeData(parsed.data || parsed);
+      writeData(restored);
+      boot();
+      showToast("Respaldo restaurado");
+    } catch (error) {
+      console.error("No se pudo restaurar respaldo", error);
+      showToast("Respaldo invalido", "error");
+    }
+  };
+  reader.onerror = function () {
+    showToast("No se pudo leer respaldo", "error");
+  };
+  reader.readAsText(file);
+}
 function seedData() {
   var data = structuredClone(demoData);
   data.entregas = [{
@@ -906,6 +1021,14 @@ document.querySelector("#pdfButton").addEventListener("click", generatePdf);
 document.querySelector("#accountCafe").addEventListener("change", renderAccountHistory);
 document.querySelector("#accountStart").addEventListener("change", renderAccountHistory);
 document.querySelector("#backupButton").addEventListener("click", createBackup);
+document.querySelector("#restoreButton").addEventListener("click", function () {
+  document.querySelector("#restoreInput").click();
+});
+document.querySelector("#restoreInput").addEventListener("change", function (event) {
+  var file = event.target.files && event.target.files[0];
+  restoreBackupFile(file);
+  event.target.value = "";
+});
 document.querySelector("#seedButton").addEventListener("click", seedData);
 document.querySelector("#addCafeButton").addEventListener("click", addCafe);
 document.querySelector("#addProductButton").addEventListener("click", addProduct);
@@ -922,4 +1045,4 @@ document.querySelector("#numberWheel").addEventListener("scroll", function () {
   clearTimeout(wheelScrollTimer);
   wheelScrollTimer = setTimeout(updateWheelFromCenter, 90);
 });
-boot();
+initStorage().then(boot);
