@@ -124,9 +124,8 @@ header {
 
 main {
   width: 100%;
-  max-width: 430px;
-  margin: 0 auto;
-  padding: 16px 14px calc(104px + var(--safe-bottom));
+  margin: 0;
+  padding: 16px max(14px, env(safe-area-inset-left)) calc(104px + var(--safe-bottom)) max(14px, env(safe-area-inset-right));
 }
 
 .view {
@@ -911,7 +910,6 @@ th {
   grid-template-columns: 24px 1fr;
   align-items: center;
   gap: 10px;
-  max-width: 402px;
   margin: 0 auto;
   transform: translateY(18px) scale(0.98);
   opacity: 0;
@@ -981,7 +979,7 @@ th {
 
 .number-panel {
   position: relative;
-  width: min(430px, 100%);
+  width: 100%;
   max-height: none;
   margin: 0 auto;
   border: 1px solid rgba(23,23,23,0.08);
@@ -1111,16 +1109,5 @@ th {
 
   .number-wheel {
     padding: 96px 0;
-  }
-}
-
-@media (min-width: 431px) {
-  body {
-    background: #0e0d0c;
-  }
-
-  .phone-app {
-    max-width: 430px;
-    margin: 0 auto;
   }
 }
