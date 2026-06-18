@@ -99,15 +99,20 @@
         <div class="workbench active" id="accountWorkbench">
           <div class="card">
             <div class="card-header"><h2>Cuenta semanal</h2></div>
-            <div class="form-stack">
+            <div class="form-stack account-form">
               <label>
                 Cafeteria
                 <select id="accountCafe"></select>
               </label>
-            <label>
-              Semana
-              <select id="accountStart"></select>
-              </label>
+              <div class="account-week-nav">
+                <button class="date-nav-btn" id="prevWeekButton" type="button">‹</button>
+                <div class="date-center">
+                  <div class="day-name">Semana</div>
+                  <div class="date-full" id="accountWeekText"></div>
+                </div>
+                <button class="date-nav-btn" id="nextWeekButton" type="button">›</button>
+              </div>
+              <input id="accountStart" type="hidden">
               <button id="pdfButton" class="form-btn secondary" type="button">Generar PDF</button>
             </div>
           </div>

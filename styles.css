@@ -445,6 +445,25 @@ main {
   padding: 9px;
 }
 
+.account-form {
+  padding: 12px;
+}
+
+.account-week-nav {
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px solid var(--rule);
+  border-radius: 14px;
+  background: var(--surface);
+  padding: 10px;
+}
+
+.account-week-nav .date-full {
+  font-size: 21px;
+}
+
 .date-nav-btn {
   display: grid;
   place-items: center;

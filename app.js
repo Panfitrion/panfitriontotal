@@ -224,6 +224,7 @@ function initStorage() {
 var appData = loadLocalStorageData() || structuredClone(demoData);
 var selectedCafeId = "";
 var selectedDate = todayKey();
+var selectedAccountStart = mondayOfWeek(todayKey());
 var activeNumberButton = null;
 var activeWheelValue = 0;
 var wheelScrollTimer = null;
@@ -404,11 +405,16 @@ function fillSelect(select, items) {
   }).join("");
 }
 function fillWeekSelect() {
-  var select = document.querySelector("#accountStart");
-  select.innerHTML = recentMondays().map(function (monday) {
-    var saturday = addDays(monday, 5);
-    return "<option value=\"".concat(monday, "\">").concat(formatDisplayDate(monday).short, " al ").concat(formatDisplayDate(saturday).short, "</option>");
-  }).join("");
+  renderAccountWeek();
+}
+function renderAccountWeek() {
+  var input = document.querySelector("#accountStart");
+  var label = document.querySelector("#accountWeekText");
+  if (!input || !label) return;
+  selectedAccountStart = mondayOfWeek(selectedAccountStart || todayKey());
+  var saturday = addDays(selectedAccountStart, 5);
+  input.value = selectedAccountStart;
+  label.textContent = "".concat(formatDisplayDate(selectedAccountStart).short, " al ").concat(formatDisplayDate(saturday).short);
 }
 function productRowsForCafe(data, cafeteriaId) {
   return data.precios.filter(function (price) {
@@ -605,7 +611,7 @@ function getAccountData() {
   var _cafeteria$nombre2;
   var data = readData();
   var cafeteriaId = document.querySelector("#accountCafe").value;
-  var start = document.querySelector("#accountStart").value;
+  var start = document.querySelector("#accountStart").value || selectedAccountStart;
   var dates = weekDates(start);
   var cafeteria = data.cafeterias.find(function (item) {
     return item.id === cafeteriaId;
@@ -1076,10 +1082,19 @@ document.querySelector("#todayButton").addEventListener("click", function () {
   renderHeaderDate();
   renderDeliveryProducts();
 });
+document.querySelector("#prevWeekButton").addEventListener("click", function () {
+  selectedAccountStart = addDays(selectedAccountStart, -7);
+  renderAccountWeek();
+  renderAccountHistory();
+});
+document.querySelector("#nextWeekButton").addEventListener("click", function () {
+  selectedAccountStart = addDays(selectedAccountStart, 7);
+  renderAccountWeek();
+  renderAccountHistory();
+});
 document.querySelector("#saveDeliveryButton").addEventListener("click", saveDelivery);
 document.querySelector("#pdfButton").addEventListener("click", generatePdf);
 document.querySelector("#accountCafe").addEventListener("change", renderAccountHistory);
-document.querySelector("#accountStart").addEventListener("change", renderAccountHistory);
 document.querySelector("#backupButton").addEventListener("click", createBackup);
 document.querySelector("#restoreButton").addEventListener("click", function () {
   document.querySelector("#restoreInput").click();
