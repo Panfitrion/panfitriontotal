@@ -335,6 +335,7 @@ main {
 .module-intro {
   display: grid;
   gap: 14px;
+  margin-bottom: 18px;
 }
 
 .module-intro > span {
@@ -369,6 +370,35 @@ main {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+#view-catalogos {
+  padding-bottom: 12px;
+}
+
+#view-catalogos > .card,
+#view-catalogos > .backup-panel {
+  margin-top: 18px;
+}
+
+.catalog-card {
+  border-radius: 24px;
+}
+
+.backup-panel {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(255,255,255,0.48);
+  border-radius: 24px;
+  background: rgba(238,236,230,0.18);
+  padding: 12px;
+  box-shadow: var(--shadow), inset 0 1px 1px rgba(255,255,255,0.48);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.backup-panel .save-bar {
+  min-height: 54px;
 }
 
 .visual-cafe-card {
@@ -587,9 +617,9 @@ main {
 .catalog-row,
 .saved-row {
   display: grid;
-  gap: 3px;
+  gap: 5px;
   border-bottom: 1px solid rgba(255,255,255,0.28);
-  padding: 15px 16px;
+  padding: 17px 18px;
 }
 
 .catalog-row:last-child,
@@ -1172,6 +1202,7 @@ th {
 .catalog-row {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
+  min-height: 68px;
 }
 
 .catalog-row b,

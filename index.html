@@ -135,17 +135,19 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card catalog-card">
           <div class="card-header"><h2>Cafeterias</h2></div>
           <div id="catalogCafeList" class="catalog-list"></div>
         </div>
 
-        <div class="card">
+        <div class="card catalog-card">
           <div class="card-header"><h2>Productos y precios</h2></div>
           <div id="catalogProductList" class="catalog-list"></div>
         </div>
-        <button id="backupButton" class="save-bar" type="button">Crear respaldo</button>
-        <button id="restoreButton" class="save-bar secondary" type="button">Restaurar respaldo</button>
+        <div class="backup-panel">
+          <button id="backupButton" class="save-bar" type="button">Crear respaldo</button>
+          <button id="restoreButton" class="save-bar secondary" type="button">Restaurar respaldo</button>
+        </div>
         <input id="restoreInput" type="file" accept=".panfitrion,application/json" hidden>
       </section>
       </main>
