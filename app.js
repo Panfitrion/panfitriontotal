@@ -107,6 +107,8 @@ var appData = structuredClone(demoData);
 var selectedCafeId = "caf_amin";
 var selectedDate = todayKey();
 var activeNumberButton = null;
+var activeWheelValue = 0;
+var wheelScrollTimer = null;
 function readData() {
   return structuredClone(appData);
 }
@@ -192,6 +194,31 @@ function setNumberButtonValue(button, value) {
   button.textContent = normalized;
   button.classList.toggle("has-value", normalized > 0);
 }
+function setWheelValue(value) {
+  activeWheelValue = Math.max(0, Number(value) || 0);
+  var valueLabel = document.querySelector("#numberWheelValue");
+  if (valueLabel) valueLabel.textContent = activeWheelValue;
+  document.querySelectorAll(".number-option").forEach(function (option) {
+    option.classList.toggle("selected", Number(option.dataset.wheelValue) === activeWheelValue);
+  });
+}
+function updateWheelFromCenter() {
+  var wheel = document.querySelector("#numberWheel");
+  if (!wheel) return;
+  var center = wheel.getBoundingClientRect().top + wheel.clientHeight / 2;
+  var closest = null;
+  var distance = Infinity;
+  wheel.querySelectorAll(".number-option").forEach(function (option) {
+    var rect = option.getBoundingClientRect();
+    var optionCenter = rect.top + rect.height / 2;
+    var nextDistance = Math.abs(center - optionCenter);
+    if (nextDistance < distance) {
+      closest = option;
+      distance = nextDistance;
+    }
+  });
+  if (closest) setWheelValue(closest.dataset.wheelValue);
+}
 function openNumberWheel(button) {
   activeNumberButton = button;
   var sheet = document.querySelector("#numberWheelSheet");
@@ -205,6 +232,7 @@ function openNumberWheel(button) {
   }, function (_, number) {
     return "\n    <button class=\"number-option ".concat(number === current ? "selected" : "", "\" data-wheel-value=\"").concat(number, "\" type=\"button\">").concat(number, "</button>\n  ");
   }).join("");
+  setWheelValue(current);
   sheet.classList.add("show");
   sheet.setAttribute("aria-hidden", "false");
   var selected = wheel.querySelector(".number-option.selected");
@@ -222,6 +250,9 @@ function selectWheelValue(value) {
   if (!activeNumberButton) return;
   setNumberButtonValue(activeNumberButton, value);
   closeNumberWheel();
+}
+function useWheelValue() {
+  selectWheelValue(activeWheelValue);
 }
 function fillSelect(select, items) {
   select.innerHTML = items.map(function (item) {
@@ -851,10 +882,16 @@ document.querySelector("#seedButton").addEventListener("click", seedData);
 document.querySelector("#addCafeButton").addEventListener("click", addCafe);
 document.querySelector("#addProductButton").addEventListener("click", addProduct);
 document.querySelector("#closeNumberWheel").addEventListener("click", closeNumberWheel);
+document.querySelector("#useNumberWheel").addEventListener("click", useWheelValue);
 document.querySelector("[data-close-wheel]").addEventListener("click", closeNumberWheel);
 document.querySelector("#numberWheel").addEventListener("click", function (event) {
   var option = event.target.closest("[data-wheel-value]");
   if (!option) return;
   selectWheelValue(option.dataset.wheelValue);
+});
+document.querySelector("#numberWheel").addEventListener("scroll", function () {
+  updateWheelFromCenter();
+  clearTimeout(wheelScrollTimer);
+  wheelScrollTimer = setTimeout(updateWheelFromCenter, 90);
 });
 boot();
