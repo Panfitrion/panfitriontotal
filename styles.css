@@ -292,7 +292,8 @@ main {
 }
 
 .workbench.active {
-  display: block;
+  display: grid;
+  gap: 12px;
   animation: panel-in 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -367,7 +368,7 @@ main {
 
 .card {
   overflow: hidden;
-  margin-bottom: 14px;
+  margin-bottom: 0;
   border: 1px solid var(--rule);
   border-radius: var(--r);
   background: rgba(255,254,250,0.96);
@@ -405,10 +406,10 @@ main {
 
 .date-row {
   display: grid;
-  grid-template-columns: 42px 1fr 42px;
+  grid-template-columns: 42px 1fr 42px auto;
   align-items: center;
   gap: 10px;
-  padding: 16px;
+  padding: 14px;
 }
 
 .date-nav-btn {
@@ -439,13 +440,12 @@ main {
 
 .date-full {
   font-family: "New York", ui-serif, Georgia, serif;
-  font-size: 25px;
+  font-size: 23px;
   letter-spacing: 0;
 }
 
 .today-btn {
-  grid-column: 1 / -1;
-  min-height: 38px;
+  min-height: 42px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: #fff;
@@ -456,37 +456,43 @@ main {
 
 .cafe-select-list {
   display: flex;
-  flex-direction: column;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 12px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
 }
 
 .cafe-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--rule);
-  padding: 16px;
-  transition: background 160ms ease;
-}
-
-.cafe-option:last-child {
-  border-bottom: 0;
+  min-width: max-content;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: #fff;
+  gap: 10px;
+  padding: 11px 12px 11px 14px;
+  scroll-snap-align: start;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .cafe-option.selected {
+  border-color: var(--ink);
   background: #f0efeb;
 }
 
 .cafe-option-name {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
 }
 
 .cafe-option-check {
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
-  border: 2px solid var(--rule);
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--rule);
   border-radius: 50%;
   color: #fff;
   flex-shrink: 0;

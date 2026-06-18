@@ -466,6 +466,7 @@ function renderVisualCafeCards() {
   var _loop = function _loop() {
     var target = _targets[_i];
     var container = document.querySelector(target.selector);
+    if (!container) return 0;
     if (!data.cafeterias.length) {
       container.innerHTML = "<div class=\"empty-state\">Agrega una cafeteria en Datos.</div>";
       return 0;
@@ -487,8 +488,6 @@ function renderVisualCafeCards() {
       renderCafeList();
       renderDeliveryProducts();
       if (card.dataset.action === "account") {
-        document.querySelector("#accountsIntro").style.display = "none";
-        document.querySelector("#accountWorkbench").classList.add("active");
         renderAccountHistory();
       }
     });
@@ -1004,14 +1003,6 @@ function showView(viewName) {
   document.querySelectorAll(".view").forEach(function (view) {
     view.classList.toggle("active", view.id === "view-".concat(viewName));
   });
-  if (viewName === "entregas") {
-    document.querySelector("#deliveriesIntro").style.display = "";
-    document.querySelector("#deliveryWorkbench").classList.remove("active");
-  }
-  if (viewName === "cuentas") {
-    document.querySelector("#accountsIntro").style.display = "";
-    document.querySelector("#accountWorkbench").classList.remove("active");
-  }
 }
 function boot() {
   var _data$cafeterias$2;
@@ -1053,10 +1044,6 @@ document.querySelector("#todayButton").addEventListener("click", function () {
   selectedDate = todayKey();
   renderHeaderDate();
   renderDeliveryProducts();
-});
-document.querySelector("#startDeliveryButton").addEventListener("click", function () {
-  document.querySelector("#deliveriesIntro").style.display = "none";
-  document.querySelector("#deliveryWorkbench").classList.add("active");
 });
 document.querySelector("#saveDeliveryButton").addEventListener("click", saveDelivery);
 document.querySelector("#pdfButton").addEventListener("click", generatePdf);
