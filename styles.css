@@ -602,6 +602,17 @@ main {
   font-family: "SF Mono", ui-monospace, Menlo, monospace;
 }
 
+.empty-state {
+  border: 1px dashed var(--rule);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.55);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 16px;
+  text-align: center;
+}
+
 .form-stack {
   display: grid;
   gap: 12px;

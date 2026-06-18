@@ -114,8 +114,8 @@ function normalizeData(data) {
   if (!data || _typeof(data) !== "object") return fallback;
   return {
     version: data.version || fallback.version,
-    cafeterias: Array.isArray(data.cafeterias) && data.cafeterias.length ? data.cafeterias : fallback.cafeterias,
-    productos: Array.isArray(data.productos) && data.productos.length ? data.productos : fallback.productos,
+    cafeterias: Array.isArray(data.cafeterias) ? data.cafeterias : fallback.cafeterias,
+    productos: Array.isArray(data.productos) ? data.productos : fallback.productos,
     precios: Array.isArray(data.precios) ? data.precios : fallback.precios,
     entregas: Array.isArray(data.entregas) ? data.entregas : fallback.entregas,
     ajustes: Array.isArray(data.ajustes) ? data.ajustes : fallback.ajustes
@@ -222,7 +222,7 @@ function initStorage() {
   });
 }
 var appData = loadLocalStorageData() || structuredClone(demoData);
-var selectedCafeId = "caf_amin";
+var selectedCafeId = "";
 var selectedDate = todayKey();
 var activeNumberButton = null;
 var activeWheelValue = 0;
@@ -419,6 +419,10 @@ function renderHeaderDate() {
 function renderCafeList() {
   var data = readData();
   var container = document.querySelector("#cafeSelectList");
+  if (!data.cafeterias.length) {
+    container.innerHTML = "<div class=\"empty-state\">Agrega una cafeteria en Datos.</div>";
+    return;
+  }
   container.innerHTML = data.cafeterias.map(function (cafe) {
     return "\n    <div class=\"cafe-option ".concat(selectedCafeId === cafe.id ? "selected" : "", "\" data-cafe-id=\"").concat(cafe.id, "\">\n      <span class=\"cafe-option-name\">").concat(cafe.nombre, "</span>\n      <div class=\"cafe-option-check\">").concat(selectedCafeId === cafe.id ? "✓" : "", "</div>\n    </div>\n  ");
   }).join("");
@@ -442,6 +446,10 @@ function renderVisualCafeCards() {
   var _loop = function _loop() {
     var target = _targets[_i];
     var container = document.querySelector(target.selector);
+    if (!data.cafeterias.length) {
+      container.innerHTML = "<div class=\"empty-state\">Agrega una cafeteria en Datos.</div>";
+      return 0;
+    }
     container.innerHTML = data.cafeterias.map(function (cafe) {
       var initial = cafe.nombre.slice(0, 1).toUpperCase();
       var products = productRowsForCafe(data, cafe.id).length;
@@ -471,6 +479,14 @@ function renderDeliveryProducts() {
   var rows = productRowsForCafe(data, selectedCafeId);
   var delivery = getDelivery(data, selectedCafeId, selectedDate);
   var container = document.querySelector("#deliveryProducts");
+  if (!selectedCafeId) {
+    container.innerHTML = "<div class=\"empty-state\">Agrega una cafeteria en Datos.</div>";
+    return;
+  }
+  if (!rows.length) {
+    container.innerHTML = "<div class=\"empty-state\">Agrega productos para esta cafeteria en Datos.</div>";
+    return;
+  }
   container.innerHTML = rows.map(function (row) {
     var _saved$cantidad, _saved$devuelto;
     var saved = delivery === null || delivery === void 0 ? void 0 : delivery.productos.find(function (item) {
@@ -488,6 +504,7 @@ function renderDeliveryProducts() {
   });
 }
 function saveDelivery() {
+  if (!selectedCafeId) return showToast("Agrega una cafeteria", "error");
   var data = readData();
   var rows = _toConsumableArray(document.querySelectorAll("#deliveryProducts .product-row"));
   var productos = rows.map(function (row) {
@@ -617,6 +634,7 @@ function renderAccountHistory() {
   }
 }
 function generatePdf() {
+  if (!document.querySelector("#accountCafe").value) return showToast("Agrega una cafeteria", "error");
   var account = getAccountData();
   var jsPDF = window.jspdf.jsPDF;
   var doc = new jsPDF({
@@ -726,7 +744,7 @@ function renderCatalogs() {
   }
   document.querySelector("#catalogCafeList").innerHTML = data.cafeterias.map(function (cafe) {
     return "\n    <div class=\"catalog-row\">\n      <span>\n        <b>".concat(cafe.nombre, "</b>\n        <small>Cuenta lunes a sabado</small>\n      </span>\n      <span class=\"row-actions\">\n        <button class=\"icon-btn\" data-delete-cafe=\"").concat(cafe.id, "\" type=\"button\">\xD7</button>\n      </span>\n    </div>\n  ");
-  }).join("");
+  }).join("") || "<div class=\"catalog-row\"><span>Sin cafeterias.</span></div>";
   document.querySelector("#catalogProductList").innerHTML = data.precios.map(function (price) {
     var _product$nombre, _cafe$nombre;
     var cafe = data.cafeterias.find(function (item) {
@@ -736,7 +754,7 @@ function renderCatalogs() {
       return item.id === price.productoId;
     });
     return "\n      <div class=\"catalog-row\">\n        <span>\n          <b>".concat((_product$nombre = product === null || product === void 0 ? void 0 : product.nombre) !== null && _product$nombre !== void 0 ? _product$nombre : "Producto", "</b>\n          <small>").concat((_cafe$nombre = cafe === null || cafe === void 0 ? void 0 : cafe.nombre) !== null && _cafe$nombre !== void 0 ? _cafe$nombre : "Cafeteria", " - ").concat(money(price.precio)).concat(product !== null && product !== void 0 && product.permiteDevolucion ? " - devoluciones" : "", "</small>\n        </span>\n        <span class=\"row-actions\">\n          <button class=\"icon-btn\" data-delete-price=\"").concat(price.id, "\" type=\"button\">\xD7</button>\n        </span>\n      </div>\n    ");
-  }).join("");
+  }).join("") || "<div class=\"catalog-row\"><span>Sin productos configurados.</span></div>";
   document.querySelectorAll("[data-delete-cafe]").forEach(function (button) {
     button.addEventListener("click", function () {
       return deleteCafe(button.dataset.deleteCafe);
@@ -976,7 +994,9 @@ function showView(viewName) {
 function boot() {
   var _data$cafeterias$2;
   var data = readData();
-  selectedCafeId = selectedCafeId || ((_data$cafeterias$2 = data.cafeterias[0]) === null || _data$cafeterias$2 === void 0 ? void 0 : _data$cafeterias$2.id);
+  selectedCafeId = data.cafeterias.some(function (cafe) {
+    return cafe.id === selectedCafeId;
+  }) ? selectedCafeId : ((_data$cafeterias$2 = data.cafeterias[0]) === null || _data$cafeterias$2 === void 0 ? void 0 : _data$cafeterias$2.id) || "";
   fillSelect(document.querySelector("#accountCafe"), data.cafeterias);
   fillWeekSelect();
   renderAccountHistory();
