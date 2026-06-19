@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>PayloadContent</key>
+  <array>
+    <dict>
+      <key>FullScreen</key>
+      <true/>
+      <key>IsRemovable</key>
+      <true/>
+      <key>Label</key>
+      <string>PANFITRION</string>
+      <key>PayloadDescription</key>
+      <string>Agrega PANFITRION como app web en la pantalla de inicio.</string>
+      <key>PayloadDisplayName</key>
+      <string>PANFITRION</string>
+      <key>PayloadIdentifier</key>
+      <string>mx.com.panfitrion.webclip</string>
+      <key>PayloadType</key>
+      <string>com.apple.webClip.managed</string>
+      <key>PayloadUUID</key>
+      <string>E20485A7-E61A-4C9C-ACDE-6FDD9389BE1A</string>
+      <key>PayloadVersion</key>
+      <integer>1</integer>
+      <key>Precomposed</key>
+      <false/>
+      <key>URL</key>
+      <string>https://panfitrion.github.io/panfitriontotal/</string>
+    </dict>
+  </array>
+  <key>PayloadDescription</key>
+  <string>Perfil de configuracion para instalar PANFITRION en iPhone como Web Clip.</string>
+  <key>PayloadDisplayName</key>
+  <string>PANFITRION</string>
+  <key>PayloadIdentifier</key>
+  <string>mx.com.panfitrion.profile</string>
+  <key>PayloadOrganization</key>
+  <string>PANFITRION</string>
+  <key>PayloadRemovalDisallowed</key>
+  <false/>
+  <key>PayloadType</key>
+  <string>Configuration</string>
+  <key>PayloadUUID</key>
+  <string>D80B007B-0806-4685-8ED0-71513416044C</string>
+  <key>PayloadVersion</key>
+  <integer>1</integer>
+</dict>
+</plist>
